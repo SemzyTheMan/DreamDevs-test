@@ -14,24 +14,38 @@ public class Solution {
 
         Integer highestSalesVolume = Collections.max(getHighestSalesVolumeInADay(allData));
         System.out.println(highestSalesVolume);
+        Double highestSalesValue = Collections.max(getHighestSalesValueInADay(allData));
+        System.out.println(highestSalesValue);
 
 
     }
 
     public static List<Integer> getHighestSalesVolumeInADay(List<Map<String, Object>> allRecords) {
-        List<Integer>  totalSalesVolumePerDay = new ArrayList<>();
+        List<Integer> totalSalesVolumePerDay = new ArrayList<>();
         allRecords.forEach(record -> {
             Object products = record.get("products");
-            List<Map<String, Integer>>  productsList = convertStringToList(products.toString());
-            Integer totalQuantity=0;
-            for(Map<String, Integer> product : productsList){
-                totalQuantity+= product.get("quantity");
+            List<Map<String, Integer>> productsList = convertStringToList(products.toString());
+            Integer totalQuantity = 0;
+            for (Map<String, Integer> product : productsList) {
+                totalQuantity += product.get("quantity");
             }
             totalSalesVolumePerDay.add(totalQuantity);
 
         });
 
         return totalSalesVolumePerDay;
+
+    }
+
+    public static List<Double> getHighestSalesValueInADay(List<Map<String, Object>> allRecords) {
+        List<Double> totalSalesValuePerDay = new ArrayList<>();
+        allRecords.forEach(record -> {
+            Double totalAmount = Double.valueOf(record.get("totalAmount").toString());
+
+            totalSalesValuePerDay.add(totalAmount);
+
+        });
+        return totalSalesValuePerDay;
 
     }
 
