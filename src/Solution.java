@@ -13,10 +13,33 @@ public class Solution {
         List<Map<String, Object>> allData = readTextFiles("test-case-1");
 
         Integer highestSalesVolume = Collections.max(getHighestSalesVolumeInADay(allData));
-        System.out.println(highestSalesVolume);
-        Double highestSalesValue = Collections.max(getHighestSalesValueInADay(allData));
-        System.out.println(highestSalesValue);
+        System.out.println("Highest sales volume in a day = "+ highestSalesVolume);
 
+        Double highestSalesValue = Collections.max(getHighestSalesValueInADay(allData));
+        System.out.println("Highest sales value in a day = "+ highestSalesValue);
+
+        Map<String, Integer> soldByIdReport = getMostSoldProductIdByVolume(allData);
+        String mostSold = Collections.max(soldByIdReport.entrySet(), Map.Entry.comparingByValue()).getKey();
+        System.out.println("Most sold item ="+ mostSold);
+    }
+
+
+    public static Map<String, Integer> getMostSoldProductIdByVolume(List<Map<String, Object>> allRecords) {
+        Map<String, Integer> totalVolumesByProductId = new HashMap<>();
+        allRecords.forEach(record -> {
+            Object products = record.get("products");
+            List<Map<String, Integer>> productsList = convertStringToList(products.toString());
+            productsList.forEach(product -> {
+                Integer productId = product.get("productId");
+                Integer quantity = product.get("quantity");
+                totalVolumesByProductId.compute(productId.toString(), (key, oldValue) ->
+                        (oldValue == null) ? quantity : oldValue + quantity);
+
+            });
+
+        });
+
+        return totalVolumesByProductId;
 
     }
 
