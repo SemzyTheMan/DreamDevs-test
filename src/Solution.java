@@ -28,6 +28,9 @@ public class Solution {
             System.out.println("Month: " + month + "Highest Staff ID for each month: " + staffId);
         });
 
+        Integer highestHour = getHighestHour(allData);
+        System.out.println("Highest hour: " + highestHour);
+
 
     }
 
@@ -48,6 +51,18 @@ public class Solution {
         });
 
         return totalVolumesByProductId;
+
+    }
+
+    public static Integer getHighestHour(List<Map<String, Object>> allRecords) {
+        final int[] highestHour = {0};
+        allRecords.forEach(record -> {
+            int hour = LocalDateTime.parse(record.get("transactionTime").toString()).getHour();
+            if (hour > highestHour[0]) {
+                highestHour[0] = hour;
+            }
+        });
+        return highestHour[0];
 
     }
 
@@ -111,15 +126,10 @@ public class Solution {
         List<Map<String, Integer>> resultList = new ArrayList<>();
 
         input = input.replaceAll("[\\[\\]]", "");
-
         String[] mapStrings = input.split("\\},\\s*\\{");
-
         for (String mapStr : mapStrings) {
-
             mapStr = mapStr.replaceAll("[{}]", "");
-
             Map<String, Integer> map = new HashMap<>();
-
             String[] pairs = mapStr.split(",\\s*");
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
@@ -127,10 +137,8 @@ public class Solution {
                 Integer value = Integer.parseInt(keyValue[1].trim());
                 map.put(key, value);
             }
-
             resultList.add(map);
         }
-
         return resultList;
     }
 
