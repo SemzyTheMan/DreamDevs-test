@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,14 +14,21 @@ public class Solution {
         List<Map<String, Object>> allData = readTextFiles("test-case-1");
 
         Integer highestSalesVolume = Collections.max(getHighestSalesVolumeInADay(allData));
-        System.out.println("Highest sales volume in a day = "+ highestSalesVolume);
+        System.out.println("Highest sales volume in a day = " + highestSalesVolume);
 
         Double highestSalesValue = Collections.max(getHighestSalesValueInADay(allData));
-        System.out.println("Highest sales value in a day = "+ highestSalesValue);
+        System.out.println("Highest sales value in a day = " + highestSalesValue);
 
         Map<String, Integer> soldByIdReport = getMostSoldProductIdByVolume(allData);
         String mostSold = Collections.max(soldByIdReport.entrySet(), Map.Entry.comparingByValue()).getKey();
-        System.out.println("Most sold item ="+ mostSold);
+        System.out.println("Most sold item =" + mostSold);
+
+        Map<String, List<Integer>> highestStaffIdForEachMonth = getHighestStaffIdForEachMonth(allData);
+        highestStaffIdForEachMonth.forEach((month, staffId) -> {
+            System.out.println("Month: " + month + "Highest Staff ID for each month: " + staffId);
+        });
+
+
     }
 
 
@@ -41,6 +49,33 @@ public class Solution {
 
         return totalVolumesByProductId;
 
+    }
+
+    public static Map<String, List<Integer>> getHighestStaffIdForEachMonth(List<Map<String, Object>> allRecords) {
+        Map<String, List<Integer>> totalSalesStaffId = new TreeMap<>();
+        allRecords.forEach(record -> {
+            String month = LocalDateTime.parse(record.get("transactionTime").toString()).getMonth().toString();
+            Integer staffId = Integer.valueOf(record.get("salesStaffId").toString());
+            totalSalesStaffId.compute(month, (key, oldValue) -> {
+                List<Integer> staffIds = (oldValue == null) ? new ArrayList<>() : oldValue;
+                staffIds.add(staffId);
+                return staffIds;
+            });
+        });
+
+        totalSalesStaffId.entrySet().forEach(entry -> {
+            entry.setValue(Collections.singletonList(findMode(entry.getValue())));
+        });
+        return totalSalesStaffId;
+
+    }
+
+    public static Integer findMode(List<Integer> numbers) {
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
+        numbers.forEach(number -> {
+            frequencyMap.compute(number, (key, oldValue) -> (oldValue == null) ? 1 : oldValue + 1);
+        });
+        return Collections.max(frequencyMap.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
     public static List<Integer> getHighestSalesVolumeInADay(List<Map<String, Object>> allRecords) {
